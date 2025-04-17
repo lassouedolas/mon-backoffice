@@ -1,6 +1,6 @@
-async function genererHTMLDepuisPDF(cheminPDF, fichierHTML) {
+async function genererHTMLDepuisPDF(sorties/alcatel-f860-guide-fr.pdf, exemple.html) {
   try {
-    const texte = await extraireTexteDepuisPDF(cheminPDF);
+    const texte = await extraireTexteDepuisPDF(sorties/alcatel-f860-guide-fr.pdf);
 
     // Exemple de structuration du texte extrait en HTML
     const contenuHTML = `
@@ -19,8 +19,8 @@ async function genererHTMLDepuisPDF(cheminPDF, fichierHTML) {
     `.trim();
 
     // Écrire le contenu dans un fichier HTML
-    fs.writeFileSync(fichierHTML, contenuHTML, "utf-8");
-    console.log(`✅ Fichier HTML généré : ${fichierHTML}`);
+    fs.writeFileSync(exemple.html, contenuHTML, "utf-8");
+    console.log(`✅ Fichier HTML généré : ${exemple.html}`);
   } catch (error) {
     console.error("Erreur lors de la génération du fichier HTML :", error);
   }
