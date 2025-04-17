@@ -1,0 +1,50 @@
+const fs = require("fs");
+
+function genererTemplateHTML(cheminFicheIA, fichierHTML) {
+  const contenu = fs.readFileSync(cheminFicheIA, "utf8");
+
+  const resume = contenu.match(/Résumé\s*:\s*(.+?)(?:\n|$)/s)?.[1] || "N/A";
+  const fiche = contenu.match(/Fiche technique\s*:\s*((?:- .+\n?)+)/)?.[1] || "";
+  const faq = contenu.match(/FAQ\s*:\s*((?:Q\s?:.+\nR\s?:.+\n?)+)/)?.[1] || "";
+
+  const lignesFiche = fiche
+    .split("\n")
+    .filter(Boolean)
+    .map(l => `<li>${l.replace(/^- /, "")}</li>`)
+    .join("\n");
+
+  const lignesFAQ = faq
+    .split(/Q\s?:/)
+    .slice(1)
+    .map(bloc => {
+      const [question, reste] = bloc.split(/\nR\s?:/);
+      const reponse = reste?.trim() || "";
+      return `<li><strong>Q :</strong> ${question.trim()}<br><strong>R :</strong> ${reponse}</li>`;
+    })
+    .join("\n");
+
+  const templateHTML = `
+<div class="fiche-produit">
+  <h2>Résumé</h2>
+  <p>${resume}</p>
+
+  <h3>Caractéristiques techniques</h3>
+  <ul>
+    ${lignesFiche}
+  </ul>
+
+  <h3>FAQ</h3>
+  <ul>
+    ${lignesFAQ}
+  </ul>
+</div>`.trim();
+
+  fs.writeFileSync(fichierHTML, templateHTML, "utf8");
+  console.log(`✅ Template HTML créé : ${fichierHTML}`);
+}
+
+// Exemple d'utilisation
+const ficheIA = "sorties/samsung_WW90T554DTW_ficheIA.txt";
+const templateSortie = "templates/samsung_WW90T554DTW.html";
+
+genererTemplateHTML(ficheIA, templateSortie);

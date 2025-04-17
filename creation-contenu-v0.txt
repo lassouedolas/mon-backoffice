@@ -1,0 +1,33 @@
+const fs = require("fs");
+const pdfParse = require("pdf-parse");
+
+// === Fonction pour nettoyer le texte brut ===
+function nettoyerTexte(texte) {
+  return texte
+    .split("\n")
+    .map(ligne => ligne.trim())
+    .filter(ligne => ligne.length > 0)
+    .join("\n");
+}
+
+// === Fonction principale pour lire le PDF et extraire le texte ===
+async function extraireTexteDepuisPDF(fichierPDF, fichierSortie) {
+  try {
+    const dataBuffer = fs.readFileSync(fichierPDF);
+    const data = await pdfParse(dataBuffer);
+
+    const texteNettoye = nettoyerTexte(data.text);
+
+    // Écrit le résultat dans un fichier texte
+    fs.writeFileSync(fichierSortie, texteNettoye, "utf8");
+    console.log(`✅ Texte extrait et sauvegardé dans ${fichierSortie}`);
+  } catch (err) {
+    console.error("❌ Erreur lors de l'extraction :", err);
+  }
+}
+
+// === Exemple d'utilisation ===
+const cheminPDF = "notices/samsung_WW90T554DTW.pdf";
+const cheminSortie = "sorties/samsung_WW90T554DTW.txt";
+
+extraireTexteDepuisPDF(cheminPDF, cheminSortie);
